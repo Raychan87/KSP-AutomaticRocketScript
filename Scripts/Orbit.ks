@@ -1,7 +1,7 @@
 //Boot Program for all Rockets with 3 stage.
 //==========================================
 //build by Raychan for KSP v1.2.2
-//					   KOS v1.1.0
+//					   KOS v1.1.2
 //					   RSS/RO/RP-0
 //
 //Startparameter -> run orbit("Orbithöhe","Kompass Richtung").
@@ -172,8 +172,7 @@ LIST ENGINES IN tempList. // get a list of all engines in vessel
 //---------------------------------------------------------------------------//
 //Beenden des Orbit und ausrichten für Manuelen Betrieb.
 //===========================================================================//
-UNLOCK THROTTLE.
-UNLOCK STEERING.
+UNLOCK ALL.
 SAS ON.
 RCS ON.
 PRINT "Orbit mit der Höhe: " + vOrbithoehe + "m wurde erreicht".
