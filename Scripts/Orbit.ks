@@ -1,6 +1,10 @@
-//Programm für ein Orbit mit einer 3 Stufigen Rakete
+//Boot Program for all Rockets with 3 stage.
+//==========================================
+//build by Raychan for KSP v1.2.2
+//					   KOS v1.1.2
+//					   RSS/RO/RP-0
+//
 //Startparameter -> run orbit("Orbithöhe","Kompass Richtung").
-//build by Raychan for KSP KOS
 //Tested mit PERIAPSIS = 201km; APOAPSIS = 203km.
 //---------------------------------------------------------------------------//
 //Change log table:						Version 0.9(getestet)
@@ -23,9 +27,9 @@ DECLARE vEngineStage IS 1. 		//1 = 1te Stage; 2 = 2te Stage; 3 = 3te Stage.
 DECLARE vSubOrbitFlag IS 0. 	//0 = 5°Grad Pitch; 1 = 90°Grad Pitch; 2 = APOAPSIS Korrektur, 3 = APOAPSIS Korrektur Teil 2
 DECLARE vPitchTxtFlag IS 0.		//Ein Flag für eine Textanzeige
 DECLARE vCountdown IS 10.		//Start Countdown
-DECLARE vPitch IS 0.			//Pitch für Simulierten Gravity Turn
-DECLARE vApoapsisKorrektur IS 0.
-DECLARE vHeading IS HEADING(vCompass,90).
+DECLARE vPitch IS 90.			//Pitch für Simulierten Gravity Turn
+DECLARE vApoapsisKorrektur IS 0.//Pitch Korrektur 
+DECLARE vHeading IS HEADING(vCompass,vPitch).
 WAIT 1.
 PRINT "Programm mit der Orbithöhe " + vOrbithoehe + "m und".
 PRINT "Kompassrichtung " + vCompass + "° wurde geladen.".
@@ -59,6 +63,8 @@ FROM {vCountdown.} UNTIL vCountdown = 0 STEP {SET vCountdown TO vCountdown - 1.}
 //Starten der Rakete
 PRINT "Trennen der Halterung vom Tower.".
 STAGE.
+WAIT 1.
+PRINT "T - 0".
 WAIT UNTIL SHIP:VELOCITY:SURFACE:MAG > 2.
 PRINT " ".
 PRINT "Liftoff! We Have A Liftoff!".
@@ -67,10 +73,8 @@ PRINT " ".
 //Starte Kurz für den SubOrbit
 //===========================================================================//
 UNTIL (SHIP:PERIAPSIS) > vOrbithoehe - 1000 {
-
 	//Pitch auf 85° Grad
 	IF SHIP:VELOCITY:SURFACE:MAG >= 100 AND SHIP:ALTITUDE >= 1000 AND vSubOrbitFlag = 0 {
-		PRINT "Starten der Vorbereitungsphase.".
 		PRINT "Aktuelle Höhe: " + SHIP:ALTITUDE + "m".
 		PRINT "Altielle Geschwindigkeit " + SHIP:VELOCITY:SURFACE:MAG + "m/s.".
 		PRINT "Pitch auf 85° Grad.".
@@ -82,7 +86,6 @@ UNTIL (SHIP:PERIAPSIS) > vOrbithoehe - 1000 {
 	//Pitch auf 0° Grad
 	IF (SHIP:VELOCITY:SURFACE:MAG >= 1000 OR SHIP:ALTITUDE > 20000) AND vSubOrbitFlag = 1 {
 		IF vPitchTxtFlag = 0 {
-			PRINT "Starten des Simulierten Gravity Turn Phase".
 			PRINT "Aktuelle Höhe: " + SHIP:ALTITUDE + "m".
 			PRINT "Altielle Geschwindigkeit " + SHIP:VELOCITY:SURFACE:MAG + "m/s.".
 			PRINT "Pitch auf 0° Grad.".
@@ -95,6 +98,37 @@ UNTIL (SHIP:PERIAPSIS) > vOrbithoehe - 1000 {
 			PRINT "Autokorrektur Phase 1 wird gestartet.".
 			SET vSubOrbitFlag TO 2.
 		}	
+	}
+	//Korrektur der APOAPSIS nach dem erreichen von Pitch 0°.
+	IF vSubOrbitFlag = 2 {
+		LOCK THROTTLE TO 0.01.	//Achtung nur für Steuerbare Triebwerke.!!
+		IF SHIP:APOAPSIS > (vOrbithoehe + 2000){
+			SET vApoapsisKorrektur TO +5.
+			//PRINT "+5° Grad".
+		}ELSE{ 
+			SET vApoapsisKorrektur TO -5.
+			//PRINT "-5° Grad".
+		}
+		SET vHeading TO HEADING(vCompass,vApoapsisKorrektur).
+		IF SHIP:PERIAPSIS > vOrbithoehe - 100000{
+			PRINT "Autokorrektur Phase 2 wird gestartet.".
+			SET vSubOrbitFlag TO 3.
+		}
+	}
+	//Korrektur der APOAPSIS nach dem erreichen von PERIAPSIS ab 100.000m
+	IF vSubOrbitFlag = 3{
+		IF SHIP:APOAPSIS > (vOrbithoehe + 2000){
+			IF vApoapsisKorrektur < +45 {	
+				SET vApoapsisKorrektur TO vApoapsisKorrektur + 10.
+				//PRINT "+10° Grad".
+			}	
+		}ELSE{ 
+			IF vApoapsisKorrektur > -45 {	
+				SET vApoapsisKorrektur TO vApoapsisKorrektur - 10.
+				//PRINT "-10° Grad".
+			}
+		}
+		SET vHeading TO HEADING(vCompass,vApoapsisKorrektur).
 	}
 	//Trennen der ersten Stufen und Zünden der zweiten.
 	IF SHIP:MAXTHRUST = 0 AND vEngineStage = 1{
@@ -122,47 +156,12 @@ UNTIL (SHIP:PERIAPSIS) > vOrbithoehe - 1000 {
 		STAGE.
 		SET vEngineStage TO 3.
 	}
-	//Korrektur der APOAPSIS Teil 1
-	IF vSubOrbitFlag = 2 {
-		LOCK THROTTLE TO 0.01.
-		IF ((SHIP:APOAPSIS > (vOrbithoehe + 2000)) = 0 OR (ETA:APOAPSIS < ETA:PERIAPSIS) = 0) AND ((SHIP:APOAPSIS > (vOrbithoehe + 2000)) OR (ETA:APOAPSIS < ETA:PERIAPSIS)){
-			IF vApoapsisKorrektur < +5 {	
-				SET vApoapsisKorrektur TO vApoapsisKorrektur + 5.
-				//PRINT "+5° Grad".
-			}	
-		}ELSE{ 
-			IF vApoapsisKorrektur > -5 {	
-				SET vApoapsisKorrektur TO vApoapsisKorrektur - 5.
-				//PRINT "-5° Grad".
-			}
-		}
-		SET vHeading TO HEADING(vCompass,vApoapsisKorrektur).
-		IF SHIP:PERIAPSIS > vOrbithoehe - 100000{
-			PRINT "Autokorrektur Phase 2 wird gestartet.".
-			SET vSubOrbitFlag TO 3.
-		}
-	}
-	//Korrektur der APOAPSIS Teil 2
-	IF vSubOrbitFlag = 3{
-		IF ((SHIP:APOAPSIS > (vOrbithoehe + 2000)) = 0 OR (ETA:APOAPSIS < ETA:PERIAPSIS) = 0) AND ((SHIP:APOAPSIS > (vOrbithoehe + 2000)) OR (ETA:APOAPSIS < ETA:PERIAPSIS)){
-			IF vApoapsisKorrektur < +45 {	
-				SET vApoapsisKorrektur TO vApoapsisKorrektur + 10.
-				//PRINT "+10° Grad".
-			}	
-		}ELSE{ 
-			IF vApoapsisKorrektur > -45 {	
-				SET vApoapsisKorrektur TO vApoapsisKorrektur - 10.
-				//PRINT "-10° Grad".
-			}
-		}
-		SET vHeading TO HEADING(vCompass,vApoapsisKorrektur).
-	}
 }
 //---------------------------------------------------------------------------//
 //Abschalten des Triebwerks.
 //===========================================================================//
 LOCK THROTTLE TO 0.
-PRINT "Triebwerk wird abgeschalten.".
+PRINT "Triebwerk wird abgeschaltet.".
 //Abschalten von allen Triebwerken
 LIST ENGINES IN tempList. // get a list of all engines in vessel
        FOR eng IN tempList { // loop through the engines
