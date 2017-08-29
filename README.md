@@ -14,7 +14,7 @@ This scripts can be used for launching in the Orbit.
 .
 .
 
-Sorry for my english. I am not bad in english.
+Sorry for my english. I am bad in english.
 
 .
 .
