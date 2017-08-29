@@ -1,4 +1,20 @@
-## Welcome to GitHub Pages
+## KSP-AutomaticRocketScript
+
+for Kerbal Space Programm with KOS, RSS and RO.
+
+This scripts can be used for launching in the Orbit.
+
+# Planned:
+- SubOrbit
+- Orbit (Earth)
+- Orbit (Moon)
+- Orbit another Planets
+
+
+
+
+Sorry for my english. I am not bad in english.
+
 
 You can use the [editor on GitHub](https://github.com/Raychan87/KSP-KOS-RO-Scripts/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
