@@ -1,7 +1,7 @@
 //Boot Program for all Rockets with 3 stage.
 //==========================================
 //build by Raychan for KSP v1.2.2
-//					   KOS v1.1.2
+//					   KOS v1.1.0
 //					   RSS/RO/RP-0
 //
 //Startparameter -> run orbit("Orbithöhe","Kompass Richtung").
