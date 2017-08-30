@@ -102,7 +102,7 @@ UNTIL (SHIP:PERIAPSIS) > vOrbithoehe - 1000 {
 	//Korrektur der APOAPSIS nach dem erreichen von Pitch 0°.
 	IF vSubOrbitFlag = 2 {
 		LOCK THROTTLE TO 0.01.	//Achtung nur für Steuerbare Triebwerke.!!
-		IF SHIP:APOAPSIS > (vOrbithoehe + 2000){
+		IF ((SHIP:APOAPSIS > (vOrbithoehe + 2000)) = 0 OR (ETA:APOAPSIS < ETA:PERIAPSIS) = 0) AND ((SHIP:APOAPSIS > (vOrbithoehe + 2000)) OR (ETA:APOAPSIS < ETA:PERIAPSIS)){
 			SET vApoapsisKorrektur TO +5.
 			//PRINT "+5° Grad".
 		}ELSE{ 
@@ -117,7 +117,7 @@ UNTIL (SHIP:PERIAPSIS) > vOrbithoehe - 1000 {
 	}
 	//Korrektur der APOAPSIS nach dem erreichen von PERIAPSIS ab 100.000m
 	IF vSubOrbitFlag = 3{
-		IF SHIP:APOAPSIS > (vOrbithoehe + 2000){
+		IF ((SHIP:APOAPSIS > (vOrbithoehe + 2000)) = 0 OR (ETA:APOAPSIS < ETA:PERIAPSIS) = 0) AND ((SHIP:APOAPSIS > (vOrbithoehe + 2000)) OR (ETA:APOAPSIS < ETA:PERIAPSIS)){
 			IF vApoapsisKorrektur < +45 {	
 				SET vApoapsisKorrektur TO vApoapsisKorrektur + 10.
 				//PRINT "+10° Grad".
