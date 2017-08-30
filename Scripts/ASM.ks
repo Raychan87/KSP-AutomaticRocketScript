@@ -1,6 +1,8 @@
-//ASM Programm um die Rakete zu überwachen.
-//Startparameter -> run watch.
-//build by Raychan for KSP KOS
+//Boot Program for all Rockets.
+//=============================
+//build by Raychan for KSP v1.2.2
+//					   KOS v1.1.0
+//					   RSS/RO/RP-0
 //
 //---------------------------------------------------------------------------//
 //Change log table:						Version 0.3(testet)
@@ -62,7 +64,7 @@ UNTIL 0 {
 		PRINT"SolarPanels werden ausgefahren.".
 		set vSolarPanel TO 1.
 	}
-	IF vSolarPanel = 1 AND SHIP:ALTITUDE < vSolarPanelHigh - 20000{
+	IF vSolarPanel = 1 AND SHIP:ALTITUDE < vSolarPanelHigh - 10000{
 		PANELS OFF.
 		PRINT"SolarPanels werden eingefahren.".
 		set vSolarPanel TO 0.
@@ -86,7 +88,7 @@ UNTIL 0 {
 		PRINT "Antennen werden ausgefahren.".
 		
 	}
-	IF vAntennen = 1 AND SHIP:ALTITUDE < vAntennenHigh - 20000{
+	IF vAntennen = 1 AND SHIP:ALTITUDE < vAntennenHigh - 10000{
 		SET vAntennen TO 0.
 		PRINT "Antennen werden eingefahren.".
 	}
